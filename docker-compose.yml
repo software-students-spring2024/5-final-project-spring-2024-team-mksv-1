@@ -1,0 +1,25 @@
+version: '3.8'
+services:
+  api_server:
+    build: ./API_server
+    ports:
+      - '1000:1000'
+    depends_on:
+      - db
+
+  web_app:
+    build: ./web_app
+    ports:
+      - "5001:5001"
+    depends_on:
+      - db
+      - api_server
+    
+  db:
+    image: mongo:latest
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongodb_data_container:/data/db
+volumes:
+  mongodb_data_container:

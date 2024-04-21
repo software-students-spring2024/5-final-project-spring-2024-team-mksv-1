@@ -1,0 +1,7 @@
+Flask
+Flask-PyMongo
+pymongo
+requests
+python-dotenv
+gunicorn
+MarkupSafe
