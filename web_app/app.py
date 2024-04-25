@@ -11,7 +11,7 @@ app.secret_key = os.environ.get("SECRET_KEY", "default_secret_key")
 app.debug = os.getenv("FLASK_ENV", "development") == "development"
 
 @app.route("/", methods=['GET', 'POST'])
-def show():
+def home():
     return render_template("login.html")
 
 @app.route("/show", methods=['GET', 'POST'])
