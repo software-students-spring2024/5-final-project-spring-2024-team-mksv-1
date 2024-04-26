@@ -27,7 +27,7 @@ def show():
         except requests.exceptions.RequestException as e:
             return str(e), 500
 
-@app.route('/add_game', methods=['GET','POST'])
+@app.route('/add_game', methods=['GET', 'POST'])
 def add_game():
     if request.method == 'POST':
         game_title = request.form['game_title']
@@ -41,7 +41,8 @@ def add_game():
             flash('Game added successfully!')
         else:
             flash('An error occurred while adding the game.')
-        return redirect(url_for('add_game'))
+        return redirect(url_for('show'))
+    return render_template('add_game.html')
 
 @app.route('/games/<game_id>/add_review', methods=['GET','POST'])
 def add_review(game_id):
