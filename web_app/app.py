@@ -29,13 +29,9 @@ def show():
 
 @app.route('/add_game', methods=['POST'])
 def add_game():
-    title = request.form.get('title')
-    developer = request.form.get('developer')
-    game_data = {
-        'title': title,
-        'developer': developer
-    }
-    response = requests.post("http://api_server:1000/add_game", json=game_data)
+    title = request.form('title')
+    developer = request.form('developer')
+    response = requests.post("http://api_server:1000/add_game", json={"title": title, "developer": developer})
     if response.ok:
         flash('Game added successfully!')
     else:
