@@ -6,11 +6,11 @@
 <div class="container">
     <div class="subtitle">Add Game</div>
     <form action="/add_game" method="POST">
-        <label for="title">Title:</label><br>
-        <input type="text" id="title" name="title" required><br>
+        <label for="game_title">Title:</label><br>
+        <input type="text" id="game_title" name="game_title" required><br>
         <label for="developer">Developer:</label><br>
         <input type="text" id="developer" name="developer" required><br><br>
-        <input type="submit" value="Add Game">
+        <button type="submit">Add Game</button>
     </form>
 </div>
 {% endblock %}

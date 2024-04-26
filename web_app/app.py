@@ -32,12 +32,8 @@ def add_game():
     if request.method == 'POST':
         game_title = request.form['game_title']
         developer = request.form['developer']
-        game_data = {
-            'game_title': game_title,
-            'developer': developer
-        }
-        response = requests.post("http://api_server:1000/add_game", json=game_data)
-        if response.ok:
+        response = requests.post("http://api_server:1000/add_game", json={"game_title": game_title, "developer": developer})
+        if response.status_code == 200:
             flash('Game added successfully!')
         else:
             flash('An error occurred while adding the game.')
