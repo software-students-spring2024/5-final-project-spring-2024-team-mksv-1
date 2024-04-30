@@ -5,13 +5,16 @@
 {% block content %}
 <div class="container">
     <div class="subtitle">Add Game</div>
-    <form action="/add_game" method="POST">
-        <label for="game_title">Title:</label><br>
-        <input type="text" id="game_title" name="game_title" required><br>
-        <label for="developer">Developer:</label><br>
-        <input type="text" id="developer" name="developer" required><br><br>
-        <button type="submit">Add Game</button>
-    </form>
+    <div class="game-info">
+        <p>Enter the game's title and developer:</p>
+        <form action="/add_game" method="POST" id="addGameForm"> <!-- Added id attribute -->
+            <label for="game_title">Game Title:</label><br>
+            <input type="text" id="game_title" name="game_title" required><br>
+            <label for="developer">Developer:</label><br>
+            <input type="text" id="developer" name="developer" required><br><br>
+            <button type="submit">Add Game</button>
+        </form>
+    </div>
 </div>
-{% endblock %}
 
+{% endblock %}

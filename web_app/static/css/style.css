@@ -164,3 +164,45 @@ body {
     cursor: pointer;
     transition: background-color 0.3s;
   }
+
+.game-info {
+  background-color: #eaeaea;
+  padding: 20px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+.game-info p {
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.game-info label {
+  font-weight: bold;
+}
+
+.game-info input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.game-info button {
+  padding: 10px 15px;
+  background-color: #5b9e03;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.game-info button:hover {
+  background-color: #4f8a01;
+}
+
+
