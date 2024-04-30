@@ -1,36 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Add Game Review</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
-    <h1>Add Your Review for Game ID: {{ game_id }}</h1>
-
-    <!-- Form to submit a new review -->
-    <form method="POST" action="{{ url_for('add_review_page', game_id=game_id) }}">
-        <div>
-            <label for="text">Review:</label>
-            <textarea id="text" name="text" required></textarea>
-        </div>
-        <button type="submit">Submit Review</button>
-    </form>
-
-    <!-- Link to view all reviews for this game -->
-    <a href="{{ url_for('view_reviews', game_id=game_id) }}">View All Reviews for This Game</a>
-
-</body>
-</html>
-
 {% extends "base.html" %}
 
 {% block content %}
 <div class="game-info">
-    <h1>Add Your Review for Game ID: {{ game_id }}</h1>
+    <h1>Add Your Review for Game: {{ game_id }}</h1>
     <form action="{{ url_for('add_review', game_id=game_id) }}" method="post" class="content">
-        <label for="review" style="font-weight: bold; color: #333;">Review:</label>
-        <textarea id="review" name="review" required style="width: 100%; height: 100px; margin-bottom: 15px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;"></textarea>
+        <label for="review">Review:</label>
+        <textarea id="review" name="review"></textarea>
         <button type="submit" class="content button">Submit Review</button>
     </form>
 </div>
