@@ -12,21 +12,25 @@
 <body>
 
     <main>
-        <div class="containerTwo">
-            <h1>Login</h1>
-            <form action="/login" method="POST">
-                <label for="username">Username:</label><br>
-                <input type="text" id="username" name="username" required><br>
-                <label for="password">Password:</label><br>
-                <input type="password" id="password" name="password" required><br><br>
-                <input type="submit" value="Login">
-            </form>
-            <form action="/register" method="GET">
-                <button type="submit"> Register Here</button>
-            </form>
+        <div class="container"> 
+            <div class="content">
+                <div class="box">
+                <h1>Login</h1>
+                <form action="/login" method="POST">
+                    <label for="username">Username:</label><br>
+                    <input type="text" id="username" name="username" required><br>
+                    <label for="password">Password:</label><br>
+                    <input type="password" id="password" name="password" required><br><br>
+                    <input type="submit" value="Login">
+                </form>
+                <form action="/register" method="GET">
+                    <button type="submit"> Register Here</button>
+                </form>
             
-            <!-- <a href="/register">Don't have an account? Register here.</a> -->
+                <!-- <a href="/register">Don't have an account? Register here.</a> -->
 
+                </div>
+            </div>
         </div>
     </main>
     

@@ -125,3 +125,42 @@ body {
       flex-basis: 100%; 
     }
   }
+
+
+  .box h1{
+    text-align: center;
+  }
+
+  .content form {
+    margin: 0 auto;
+    width: 400px;
+    padding: 20px;
+    background-color: #eaeaea;
+    border-radius: 2px;
+    color: black;
+    text-align: center;
+  }
+
+  .content button {
+    padding: 10px 15px;
+    background-color: #5b9e03;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .content button:hover {
+    background-color: #4f8a01;
+  }
+
+  .content input[type="submit"] {
+    padding: 10px 15px;
+    background-color: #76b900;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
