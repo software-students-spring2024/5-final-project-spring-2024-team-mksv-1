@@ -1,19 +1,23 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Game Reviews: {{ game_id }}</h2>
-{% if reviews %}
-    <ul>
-        {% for review in reviews %}
-            <li>
-                <p>{{ review['review'] }}</p>
-                <small>Reviewed by User ID: {{ review['user_id'] }}</small>
-            </li>
-        {% endfor %}
-    </ul>
-{% else %}
-    <p>No reviews yet. Be the first to write one!</p>
-{% endif %}
-<a href="{{ url_for('add_review', game_id=game_id) }}" class="btn">Add a Review</a>
-<a href="{{ url_for('show') }}" class="btn">Back to Games</a>
+
+<div class="game-info">
+
+    <h2>Game Reviews: {{ game_title }}</h2>
+    {% if reviews %}
+        <ul>
+            {% for review in reviews %}
+                <li>
+                    <p>{{ review['review'] }}</p>
+                    <small>Reviewed by User ID: {{ review['user_id'] }}</small>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No reviews yet. Be the first to write one!</p>
+    {% endif %}
+    <a href="{{ url_for('add_review', game_id=game_id) }}" class="btn">Add a Review</a>
+    <a href="{{ url_for('show') }}" class="btn">Back to Games</a>
+</div>
 {% endblock %}

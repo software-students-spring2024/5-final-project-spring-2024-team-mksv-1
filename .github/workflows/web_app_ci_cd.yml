@@ -1,0 +1,22 @@
+name: Web App CI/CD
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'web_app/**'
+  pull_request:
+    branches: [main, master]
+    paths:
+      - 'web_app/**'
+
+jobs:
+  build_and_push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build Docker image
+        run: |
+          docker build -t your-dockerhub-username/web_app:${{ github.sha }} ./web_app
+          echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login --username your-dockerhub-username --password-stdin
+          docker push your-dockerhub-username/web_app:${{ github.sha }}

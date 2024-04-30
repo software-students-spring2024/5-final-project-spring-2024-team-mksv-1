@@ -22,7 +22,7 @@ def get_games():
 
 @app.route('/games/<id>', methods=['GET'])
 def get_game(id):
-    game = db.games.find_one({'_id': ObjectId(id)})
+    game = db.games.find_one({'_id': id})
     return Response(json_util.dumps(game), mimetype='application/json') if game else ('', 404)
 
 @app.route('/add_game', methods=['POST'])

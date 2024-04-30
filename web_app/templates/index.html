@@ -10,24 +10,17 @@
 
 
 
-
-<div class="search-filter-section">
-    <form action="/search" method="GET">
-
-        <input type="text" name="search" placeholder="Search games..." aria-label="Search games">
-        <button type="submit">Search</button>
-    </form>
-</div>
-
-
 <!-- Game Listings -->
 <section class="game-listing">
     {% if docs %}
       {% for doc in docs %}
         <div class="game-item">
-          <h2>{{ doc.name }}</h2>
-          <p>{{ doc.description }}</p>
-
+          <h2>{{ doc.game_title }}</h2>
+          <p>{{ doc.developer }}</p>
+          <form action="/games/{{ doc._id }}/reviews" method="GET">
+            <input type="hidden" name="game_title" value="{{ doc.game_title }}">
+            <button type="submit">View Reviews</button>
+          </form>
         </div>
       {% endfor %}
     {% else %}
