@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="game-info">
+    <h1>Add Your Review for Game:</h1>
+    <form action="{{ url_for('add_review', game_id=game_id) }}" method="post" class="content">
+        <label for="review">Review:</label>
+        <textarea id="review" name="review"></textarea>
+        <button type="submit" class="content button">Submit Review</button>
+    </form>
+</div>
+{% endblock %}

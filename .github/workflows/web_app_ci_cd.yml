@@ -1,0 +1,13 @@
+name: Web App CI/CD
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'web_app/**'
+  pull_request:
+    branches: [main, master]
+    paths:
+      - 'web_app/**'
+
+

@@ -21,7 +21,7 @@ def show():
             response = requests.get("http://api_server:1000/games", timeout=5)
             if response.status_code == 200:
                 games = response.json()
-                return render_template('index.html', games=games)
+                return render_template('index.html', docs=games)
             else:
                 return "Failed to fetch games", 500
         except requests.exceptions.RequestException as e:
@@ -40,20 +40,52 @@ def add_game():
         return redirect(url_for('show'))
     return render_template('add_game.html')
 
-@app.route('/games/<game_id>/add_review', methods=['GET','POST'])
+@app.route('/games/<game_id>/add_review', methods=['GET', 'POST'])
 def add_review(game_id):
-    text = request.form.get('text')
-    user_id = "placeholder_user_id" # to be decided
-    review_data = {
-        'text': text,
-        'user_id': user_id
-    }
-    response = requests.post(f"http://api_server:1000/games/{game_id}/add_review", json=review_data)
-    if response.ok:
-        flash('Review added successfully!')
-    else:
-        flash('An error occurred while adding the review.')
-    return redirect(url_for('home'))
+    if request.method == 'POST':
+        review_text = request.form['review']
+        user_id = session.get('user_id')
+        
+
+        if not user_id:
+            flash('You must be logged in to add a review.', 'error')
+            return redirect(url_for('login'))
+
+        review_data = {
+            'user_id': user_id,
+            'game_id': game_id,
+            'review': review_text
+        }
+
+        response = requests.post(f"http://api_server:1000/reviews", json=review_data)
+
+        if response.status_code == 200:
+            flash('Review added successfully!', 'success')
+        else:
+            flash('Failed to add review. Please try again.', 'error')
+
+        return redirect(url_for('view_reviews', game_id=game_id))
+
+    return render_template('add_review.html', game_id=game_id)
+
+@app.route('/games/<game_id>/reviews', methods=['GET'])
+def view_reviews(game_id):
+    try:
+        game_title = request.args.get('game_title')
+        response = requests.get(f"http://api_server:1000/reviews/{game_id}")
+        
+        
+        if response.status_code == 200:
+            reviews = response.json()
+        else:
+            flash('Failed to fetch reviews.', 'error')
+            return redirect(url_for('show'))
+
+    except requests.exceptions.RequestException as e:
+        flash(str(e), 'error')
+        return redirect(url_for('show'))
+
+    return render_template('view_reviews.html', reviews=reviews, game_id=game_id,game_title=game_title)
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
