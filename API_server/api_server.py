@@ -83,5 +83,29 @@ def login():
     return jsonify({"error": "Invalid username or password"}), 401
 
 
+@app.route('/register', methods=['POST'])
+def register():
+    data = request.get_json()
+    if not data or 'username' not in data or 'password' not in data:
+        return jsonify({"error": "Username and password required"}), 400
+    user = db.users.find_one({'username': data['username']})
+    if user:
+        return jsonify({"error": "Username already exists"}), 400
+    user_id = db.users.insert_one(data).inserted_id
+    return jsonify({"user_id": str(user_id)}), 201
+
+
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    if not data or 'username' not in data or 'password' not in data:
+        return jsonify({"error": "Username and password required"}), 400
+    user = db.users.find_one({'username': data['username'], 'password': data['password']})
+    if user:
+        session['user_id'] = str(user['_id'])
+        return jsonify({"user_id": str(user['_id'])}), 200
+    return jsonify({"error": "Invalid username or password"}), 401
+
+
 if __name__ == '__main__':
     app.run(host="0.0.0.0",debug=True,port=1000)
