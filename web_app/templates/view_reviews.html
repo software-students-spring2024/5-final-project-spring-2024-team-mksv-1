@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Game Reviews</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <h1>Reviews for Game ID: {{ game_id }}</h1>
+    <div id="reviews">
+        {% for review in reviews %}
+            <div class="review">
+                <p>{{ review.text }}</p>
+                <small>Reviewed by User ID: {{ review.user_id }}</small>
+            </div>
+        {% else %}
+            <p>No reviews yet. Be the first to add a review!</p>
+        {% endfor %}
+    </div>
+    <a href="{{ url_for('home') }}">Back to Games</a>
+</body>
+</html>

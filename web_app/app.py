@@ -42,26 +42,33 @@ def add_game():
 
 @app.route('/games/<game_id>/add_review', methods=['POST'])
 def add_review(game_id):
-    text = request.form.get('text')
-    user_id = "placeholder_user_id" # to be decided
-    review_data = {
-        'text': text,
-        'user_id': user_id
-    }
-    response = requests.post(f"http://api_server:1000/games/{game_id}/add_review", json=review_data)
-    if response.ok:
-        flash('Review added successfully!')
-    else:
-        flash('An error occurred while adding the review.')
-    return redirect(url_for('home'))
-
-
+    if request.method == 'POST':
+        text = request.form.get('text')
+        user_id = "placeholder_user_id"  # Replace with actual user identification logic
+        review_data = {
+            'text': text,
+            'user_id': user_id,
+        }
+        # Post the new review
+        post_response = requests.post(f"http://api_server:1000/reviews", json=review_data)
+        if not post_response.ok:
+            flash('An error occurred while adding the review.')
+        return redirect(url_for('reviews', game_id=game_id))
+    
+#Added a route to display reviews
+@app.route('/games/<game_id>/reviews')
+def view_reviews(game_id):
+    try:
+        get_response = requests.get(f"http://api_server:1000/games/{game_id}/reviews")
+        reviews = get_response.json() if get_response.status_code == 200 else []
+    except requests.exceptions.RequestException as e:
+        reviews = []
+        flash(str(e))
+    return render_template('view_reviews.html', game_id=game_id, reviews=reviews)
 
 @app.route("/aboutus", methods=['GET'])
 def aboutus():
     return render_template("aboutus.html")
-
-
 
 
 if __name__ == "__main__":

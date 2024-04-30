@@ -46,7 +46,7 @@ def add_review():
     return jsonify({"id": str(review_id)}), 201
 
 @app.route('/reviews/<game_id>', methods=['GET'])
-def get_reviews_for_game(game_id):
+def view_reviews(game_id):
     reviews = db.reviews.find({'game_id': ObjectId(game_id)})
     return Response(json_util.dumps(reviews), mimetype='application/json')
 
