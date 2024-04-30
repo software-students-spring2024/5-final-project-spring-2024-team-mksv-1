@@ -34,9 +34,9 @@ def add_game():
         developer = request.form['developer']
         response = requests.post("http://api_server:1000/add_game", json={"game_title": game_title, "developer": developer})
         if response.status_code == 200:
-            flash('Game added successfully!')
+            flash('Game added successfully!', 'success') 
         else:
-            flash('An error occurred while adding the game.')
+            flash('An error occurred while adding the game.', 'error') 
         return redirect(url_for('show'))
     return render_template('add_game.html')
 
