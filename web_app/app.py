@@ -27,22 +27,20 @@ def show():
         except requests.exceptions.RequestException as e:
             return str(e), 500
 
-@app.route('/add_game', methods=['POST'])
+@app.route('/add_game', methods=['GET', 'POST'])
 def add_game():
-    title = request.form.get('title')
-    developer = request.form.get('developer')
-    game_data = {
-        'title': title,
-        'developer': developer
-    }
-    response = requests.post("http://api_server:1000/add_game", json=game_data)
-    if response.ok:
-        flash('Game added successfully!')
-    else:
-        flash('An error occurred while adding the game.')
-    return redirect(url_for('home'))
+    if request.method == 'POST':
+        game_title = request.form['game_title']
+        developer = request.form['developer']
+        response = requests.post("http://api_server:1000/add_game", json={"game_title": game_title, "developer": developer})
+        if response.status_code == 200:
+            flash('Game added successfully!')
+        else:
+            flash('An error occurred while adding the game.')
+        return redirect(url_for('show'))
+    return render_template('add_game.html')
 
-@app.route('/games/<game_id>/add_review', methods=['POST'])
+@app.route('/games/<game_id>/add_review', methods=['GET','POST'])
 def add_review(game_id):
     text = request.form.get('text')
     user_id = "placeholder_user_id" # to be decided
