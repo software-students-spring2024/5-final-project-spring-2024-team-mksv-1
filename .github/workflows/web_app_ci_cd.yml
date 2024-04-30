@@ -1,13 +1,29 @@
-name: Web App CI/CD
+name: web_app_ci_cd
 
 on:
   push:
     branches: [main, master]
-    paths:
-      - 'web_app/**'
   pull_request:
+    types: [opened, closed]
     branches: [main, master]
-    paths:
-      - 'web_app/**'
 
+permissions:
+  contents: read
+      
+jobs:
+  build_and_run:
+    runs-on: ubuntu-latest
 
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Build Docker Image
+      run: docker build -t web_app ./web_app
+
+    - name: Run Docker Container
+      run: |
+        docker run --name web-app-test -d -p 5001:5001 --name web_app
+
+    - name: Clean up
+      run: docker stop web-app-test && docker rm web-app-test
