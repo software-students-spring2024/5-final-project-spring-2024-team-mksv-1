@@ -10,13 +10,4 @@ on:
     paths:
       - 'API_server/**'
 
-jobs:
-  build_and_push:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Build Docker image
-        run: |
-          docker build -t your-dockerhub-username/api_server:${{ github.sha }} ./API_server
-          echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login --username your-dockerhub-username --password-stdin
-          docker push your-dockerhub-username/api_server:${{ github.sha }}
+
