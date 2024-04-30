@@ -1,8 +1,10 @@
-from flask import Flask, jsonify, request, Response
+import os
+from flask import Flask, jsonify, request, Response, session
 from pymongo import MongoClient
 from bson import json_util, ObjectId
 
 app = Flask(__name__)
+app.secret_key = os.environ.get("SECRET_KEY", "default_secret_key")
 
 client = MongoClient("mongodb://db:27017/")
 db = client.game
@@ -36,19 +38,50 @@ def delete_game(id):
     result = db.games.delete_one({'_id': ObjectId(id)})
     return ('', 204) if result.deleted_count > 0 else ('', 404)
 
-# CRUD for reviews
 @app.route('/reviews', methods=['POST'])
 def add_review():
     data = request.get_json()
-    if not data or 'game_id' not in data or 'user_id' not in data or 'rating' not in data:
-        return jsonify({"error": "Game ID, User ID, and Rating required"}), 400
+    if not data or 'user_id' not in data or 'game_id' not in data or 'review' not in data:
+        return jsonify({"error": "Review, user_id, and game_id required"}), 400
+
     review_id = db.reviews.insert_one(data).inserted_id
-    return jsonify({"id": str(review_id)}), 201
+    return jsonify({"review_id": str(review_id)}), 200
 
 @app.route('/reviews/<game_id>', methods=['GET'])
 def view_reviews(game_id):
-    reviews = db.reviews.find({'game_id': ObjectId(game_id)})
-    return Response(json_util.dumps(reviews), mimetype='application/json')
+    try:
+        reviews = db.reviews.find({'game_id': game_id})
+        reviews_list = list(reviews)
+        
+        return Response(json_util.dumps(reviews_list), mimetype='application/json')
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/register', methods=['POST'])
+def register():
+    data = request.get_json()
+    if not data or 'username' not in data or 'password' not in data:
+        return jsonify({"error": "Username and password required"}), 400
+    user = db.users.find_one({'username': data['username']})
+    if user:
+        return jsonify({"error": "Username already exists"}), 400
+    user_id = db.users.insert_one(data).inserted_id
+    return jsonify({"user_id": str(user_id)}), 201
+
+
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    if not data or 'username' not in data or 'password' not in data:
+        return jsonify({"error": "Username and password required"}), 400
+    user = db.users.find_one({'username': data['username'], 'password': data['password']})
+    if user:
+        session['user_id'] = str(user['_id'])
+        return jsonify({"user_id": str(user['_id'])}), 200
+    return jsonify({"error": "Invalid username or password"}), 401
+
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0",debug=True,port=1000)

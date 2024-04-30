@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAME REVIEW APP</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+</head>
+<body>
+
+    <main>
+        <div class="container"> 
+            <div class="content">
+                <div class="box">
+                <h1>Register</h1>
+                <form action="/register" method="POST">
+                    <label for="username">Username:</label><br>
+                    <input type="text" id="username" name="username" required><br>
+                    <label for="password">Password:</label><br>
+                    <input type="password" id="password" name="password" required><br><br>
+                    <input type="submit" value="Register">
+                </form>
+                <form action="/login" method="GET">
+                    <button type="submit"> Login Here</button>
+                </form>
+                <!-- <a href="/login">Already have an account? Login here.</a> -->
+                </div>
+            </div>
+        </div>
+    </main>
+    
+
+<footer>
+    <p>© 2024 Speech Recognition. All rights reserved by team mksv. <a href="https://github.com/software-students-spring2024/4-containerized-app-exercise-team-mvks.git"
+        >Available on Github</a
+    ></p>
+    
+</footer>
+
+</body>
+</html>

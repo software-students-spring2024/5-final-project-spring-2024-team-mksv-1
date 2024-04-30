@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify, flash
+from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, session
 from bson.objectid import ObjectId
 import os
 import datetime
@@ -7,12 +7,15 @@ from markupsafe import escape
 
 app = Flask(__name__)
 
-
+app.secret_key = os.environ.get("SECRET_KEY", "default_secret_key")
 app.debug = os.getenv("FLASK_ENV", "development") == "development"
-
 
 @app.route("/", methods=['GET', 'POST'])
 def home():
+    return render_template("login.html")
+
+@app.route("/show", methods=['GET', 'POST'])
+def show():
     if request.method == 'GET':
         try:
             response = requests.get("http://api_server:1000/games", timeout=5)
@@ -24,47 +27,96 @@ def home():
         except requests.exceptions.RequestException as e:
             return str(e), 500
 
-
-@app.route('/add_game', methods=['POST'])
+@app.route('/add_game', methods=['GET', 'POST'])
 def add_game():
-    title = request.form.get('title')
-    developer = request.form.get('developer')
-    game_data = {
-        'title': title,
-        'developer': developer
-    }
-    response = requests.post("http://api_server:1000/add_game", json=game_data)
-    if response.ok:
-        flash('Game added successfully!')
-    else:
-        flash('An error occurred while adding the game.')
-    return redirect(url_for('home'))
+    if request.method == 'POST':
+        game_title = request.form['game_title']
+        developer = request.form['developer']
+        response = requests.post("http://api_server:1000/add_game", json={"game_title": game_title, "developer": developer})
+        if response.status_code == 200:
+            flash('Game added successfully!', 'success') 
+        else:
+            flash('An error occurred while adding the game.', 'error') 
+        return redirect(url_for('show'))
+    return render_template('add_game.html')
 
-@app.route('/games/<game_id>/add_review', methods=['POST'])
+@app.route('/games/<game_id>/add_review', methods=['GET', 'POST'])
 def add_review(game_id):
     if request.method == 'POST':
-        text = request.form.get('text')
-        user_id = "placeholder_user_id"  # Replace with actual user identification logic
+        review_text = request.form['review']
+        user_id = session.get('user_id')
+
+        if not user_id:
+            flash('You must be logged in to add a review.', 'error')
+            return redirect(url_for('login'))
+
         review_data = {
-            'text': text,
             'user_id': user_id,
+            'game_id': game_id,
+            'review': review_text,
         }
-        # Post the new review
-        post_response = requests.post(f"http://api_server:1000/reviews", json=review_data)
-        if not post_response.ok:
-            flash('An error occurred while adding the review.')
-        return redirect(url_for('reviews', game_id=game_id))
-    
-#Added a route to display reviews
-@app.route('/games/<game_id>/reviews')
+
+        response = requests.post(f"http://api_server:1000/reviews", json=review_data)
+
+        if response.status_code == 200:
+            flash('Review added successfully!', 'success')
+        else:
+            flash('Failed to add review. Please try again.', 'error')
+
+        return redirect(url_for('view_reviews', game_id=game_id))
+
+    return render_template('add_review.html', game_id=game_id)
+
+@app.route('/games/<game_id>/reviews', methods=['GET'])
 def view_reviews(game_id):
     try:
-        get_response = requests.get(f"http://api_server:1000/games/{game_id}/reviews")
-        reviews = get_response.json() if get_response.status_code == 200 else []
+        response = requests.get(f"http://api_server:1000/reviews/{game_id}")
+
+        if response.status_code == 200:
+            reviews = response.json()
+        else:
+            flash('Failed to fetch reviews.', 'error')
+            return redirect(url_for('show'))
+
     except requests.exceptions.RequestException as e:
-        reviews = []
-        flash(str(e))
-    return render_template('view_reviews.html', game_id=game_id, reviews=reviews)
+        flash(str(e), 'error')
+        return redirect(url_for('show'))
+
+    return render_template('view_reviews.html', reviews=reviews, game_id=game_id)
+
+@app.route("/register", methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+
+        response = requests.post("http://api_server:1000/register", json={"username": username, "password": password})
+        if response.status_code == 201:
+            flash('Registration successful! Please log in.')
+            return redirect(url_for('login'))
+        else:
+            flash('Registration failed. Please try again.')
+            return redirect(url_for('register'))
+
+    return render_template('register.html')
+
+@app.route("/login", methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+
+        response = requests.post("http://api_server:1000/login", json={"username": username, "password": password})
+        if response.status_code == 200:
+            session['user_id'] = response.json().get('user_id')
+            flash('Login successful!')
+            return redirect(url_for('show'))
+        else:
+            flash('Login failed. Please try again.')
+            return redirect(url_for('login'))
+
+    return render_template('login.html')
+    
 
 @app.route("/aboutus", methods=['GET'])
 def aboutus():

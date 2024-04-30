@@ -22,3 +22,16 @@
 
 </body>
 </html>
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="game-info">
+    <h1>Add Your Review for Game ID: {{ game_id }}</h1>
+    <form action="{{ url_for('add_review', game_id=game_id) }}" method="post" class="content">
+        <label for="review" style="font-weight: bold; color: #333;">Review:</label>
+        <textarea id="review" name="review" required style="width: 100%; height: 100px; margin-bottom: 15px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;"></textarea>
+        <button type="submit" class="content button">Submit Review</button>
+    </form>
+</div>
+{% endblock %}
