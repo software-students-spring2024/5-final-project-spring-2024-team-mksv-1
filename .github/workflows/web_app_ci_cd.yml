@@ -1,40 +1,16 @@
 name: web_app_ci_cd
 
 on:
-  push:
-    branches: [main, master]
   pull_request:
-    types: [opened, closed]
-    branches: [main, master]
+    types: [closed]
+    branches:
+      - main
+      - master
 
 permissions:
   contents: read
       
 jobs:
-  unit_testing:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.8'
-  
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: Set Environment Variables
-        run: |
-          echo "MONGO_URI=${{ secrets.MONGO_URI }}" >> $GITHUB_ENV
-          echo "MONGO_USERNAME=${{ secrets.MONGO_USERNAME }}" >> $GITHUB_ENV
-          echo "MONGO_PASSWORD=${{ secrets.MONGO_PASSWORD }}" >> $GITHUB_ENV
-          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> $GITHUB_ENV
-  
-      - name: Run tests
-        run: |
-          cd tests
-          timeout 5m pipenv run python -m pytest
-          
   build_and_run:
     runs-on: ubuntu-latest
 
@@ -42,12 +18,34 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+          
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+
+    - name: Set Environment Variables
+      run: |
+        echo "MONGO_URI=${{ secrets.MONGO_URI }}" >> $GITHUB_ENV
+        echo "MONGO_USERNAME=${{ secrets.MONGO_USERNAME }}" >> $GITHUB_ENV
+        echo "MONGO_PASSWORD=${{ secrets.MONGO_PASSWORD }}" >> $GITHUB_ENV
+        echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> $GITHUB_ENV
+
+    - name: Run tests
+      run: |
+        cd tests
+        timeout 5m pipenv run python -m pytest
+
+    - name: Log in to DockerHub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
     - name: Build Docker Image
       run: docker build -t web_app ./web_app
 
-    - name: Run Docker Container
-      run: |
-        docker run --name web-app-test -d -p 5001:5001
-
-    - name: Clean up
-      run: docker stop web-app-test && docker rm web-app-test
+    - name: Push Docker image
+      run: docker push ${{ secrets.DOCKER_USERNAME }}/web_app:${{ github.sha }}
