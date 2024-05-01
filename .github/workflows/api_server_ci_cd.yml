@@ -73,7 +73,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }} 
       - name: Build Docker Image
         run: |
-          docker buildx build --platform linux/amd64 -t your_image_tag -f API_server/Dockerfile . --load
+          docker buildx build --platform linux/amd64 -t api_server -f API_server/Dockerfile . --load
       - name: Push Docker Image to Docker Hub
         uses: docker/build-push-action@v2
         with:
