@@ -11,6 +11,30 @@ permissions:
   contents: read
       
 jobs:
+  unit_testing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+  
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Set Environment Variables
+        run: |
+          echo "MONGO_URI=${{ secrets.MONGO_URI }}" >> $GITHUB_ENV
+          echo "MONGO_USERNAME=${{ secrets.MONGO_USERNAME }}" >> $GITHUB_ENV
+          echo "MONGO_PASSWORD=${{ secrets.MONGO_PASSWORD }}" >> $GITHUB_ENV
+          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> $GITHUB_ENV
+  
+      - name: Run tests
+        run: |
+          cd tests
+          timeout 5m pipenv run python -m pytest
+          
   build_and_run:
     runs-on: ubuntu-latest
 
