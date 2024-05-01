@@ -1,5 +1,7 @@
 [![.github/workflows/web_app_ci_cd.yml](https://github.com/software-students-spring2024/5-final-project-spring-2024-team-mksv-1/actions/workflows/web_app_ci_cd.yml/badge.svg?event=deployment)](https://github.com/software-students-spring2024/5-final-project-spring-2024-team-mksv-1/actions/workflows/web_app_ci_cd.yml)
 
+[![.github/workflows/api_server_ci_cd.yml](https://github.com/software-students-spring2024/5-final-project-spring-2024-team-mksv-1/actions/workflows/api_server_ci_cd.yml/badge.svg?branch=main&event=push)](https://github.com/software-students-spring2024/5-final-project-spring-2024-team-mksv-1/actions/workflows/api_server_ci_cd.yml)
+
 
 # Final Project
 
