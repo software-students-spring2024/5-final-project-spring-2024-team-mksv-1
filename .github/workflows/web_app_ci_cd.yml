@@ -2,9 +2,10 @@ name: web_app_ci_cd
 
 on:
   push:
-    branches:
-      - main
-      - master
+    branches: [main, master]
+  pull_request:
+    types: [opened, closed]
+    branches: [main, master]
 
 permissions:
   contents: read
