@@ -23,7 +23,7 @@ jobs:
 
     - name: Run Docker Container
       run: |
-        docker run --name web-app-test -d -p 5001:5001 --name web_app
+        docker run --name web-app-test -d -p 5001:5001
 
     - name: Clean up
       run: docker stop web-app-test && docker rm web-app-test
