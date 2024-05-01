@@ -3,26 +3,81 @@ name: API Server CI/CD
 on:
   push:
     branches: [main, master]
+    paths:
+      - 'API_server/**'
   pull_request:
-    types: [opened, closed]
     branches: [main, master]
-
-permissions:
-  contents: read
+    paths:
+      - 'API_server/**'
 
 jobs:
-  build_and_run:
+  deploy:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v2
+      
+      - name: Install sshpass
+        run: sudo apt-get update && sudo apt-get install -y sshpass
+  
+      - name: Rsync files to Droplet
+        env:
+          DROPLET_IP: 146.190.37.241
+          DROPLET_KEY: MKSV_PROJECT5n
+          MONGO_URI: ${{ secrets.MONGO_URI }}
+        run: |
+          sshpass -p "${DROPLET_KEY}" rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./ "root@${DROPLET_IP}:/root"
+  
+      - name: Set environment variable on Droplet
+        env:
+          DROPLET_IP: 146.190.37.241
+          DROPLET_KEY: MKSV_PROJECT5n
+          MONGO_URI: ${{ secrets.MONGO_URI }}
+        run: |
+          sshpass -p "${DROPLET_KEY}" ssh -o StrictHostKeyChecking=no "root@${DROPLET_IP}" "echo 'export MONGO_URI=${MONGO_URI}' >> ~/.bashrc"
+  
+      - name: Build and start Docker containers on Droplet
+        env:
+          DROPLET_IP: 146.190.37.241
+          DROPLET_KEY: MKSV_PROJECT5n
+          MONGO_URI: ${{ secrets.MONGO_URI }}
+        run: |
+          sshpass -p "${DROPLET_KEY}" ssh -o StrictHostKeyChecking=no "root@${DROPLET_IP}" "
+            docker-compose -f /root/docker-compose.yml down &&
+            docker-compose -f /root/docker-compose.yml build &&
+            docker-compose -f /root/docker-compose.yml up -d
+          "
 
-    - name: Build Docker Image
-      run: docker buildx build -t api_server ./API_server
-
-    - name: Run Docker Container
-      run: docker run api_server -d -p 1000:1000
-
-    - name: Clean up
-      run: docker stop api_server && docker rm api_server
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.8"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pipenv
+          pipenv install 
+          pipenv install --dev
+      - name: Testing
+        run: |
+          pipenv run pytest
+      - name: Docker login 
+        uses: docker/login-action@v2 
+        with: 
+          username: linkunwan
+          password: ${{ secrets.DOCKER_PASSWORD }} 
+      - name: Build Docker Image
+        run: |
+          docker buildx build --platform linux/amd64 -t api_server -f API_server/Dockerfile . --load
+      - name: Push Docker Image to Docker Hub
+        uses: docker/build-push-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: linkunwan/api_server
+          tag_with_ref: true
