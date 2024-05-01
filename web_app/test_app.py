@@ -89,3 +89,6 @@ def test_view_reviews(client):
             response = client.get(url_for('view_reviews', game_id=1, game_title='Test Game'))
             assert 'love it' in response.get_data(as_text=True)
             assert 'Test Game' in response.get_data(as_text=True)
+
+
+#test 2
