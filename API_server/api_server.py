@@ -6,7 +6,8 @@ from bson import json_util, ObjectId
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "default_secret_key")
 
-client = MongoClient("mongodb://db:27017/")
+#client = MongoClient("mongodb://db:27017/")
+client = MongoClient("mongodb+srv://doadmin:GR1oQ2X7U8z640l9@db-mongodb-nyc3-98341.griovdi.mongodb.net/?retryWrites=true&w=majority")
 db = client.game
 
 @app.route('/')
