@@ -15,4 +15,5 @@
 
 ## Working with this repo
 
+Website link: `http://146.190.37.241:5001/`
 Clone this repo from github, and navigate into the root directory of this repo. Then, if you are running the entire system, type `docker compose down`, then `docker compose up --build`. If you are only running parts, type `docker build -t web_app ./web_app` or `docker build -t API_server ./API_server`.
